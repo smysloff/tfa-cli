@@ -1,0 +1,26 @@
+{
+    "name": "smysloff/term-frequency-counter",
+    "type": "project",
+    "license": "GPLv3-or-later",
+    "autoload": {
+        "psr-4": {
+            "Smysloff\\TFC\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexander Smyslov",
+            "email": "kokoc.smyslov@yandex.ru"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8",
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "ext-xdebug": "*"
+    }
+}
