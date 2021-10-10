@@ -15,5 +15,27 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-include 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-include 'src'    . DIRECTORY_SEPARATOR . 'bootstrap.php';
+$bootstrap = 'src' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+$autoload = 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+if (!is_file($bootstrap)) {
+    fprintf(
+        STDERR,
+        "\e[0;31m" . "Error: can't find `src" . DIRECTORY_SEPARATOR . 'bootstrap.php` file.' . "\e[0m"
+        . PHP_EOL . 'Check the integrity of the project or try `git pull` command.' . PHP_EOL
+    );
+    exit(1);
+}
+
+if (!is_file($autoload)) {
+    fprintf(
+        STDERR,
+        "\e[0;31m" . "Error: can't find `vendor" . DIRECTORY_SEPARATOR . 'autoload.php` file.' . "\e[0m"
+        . PHP_EOL . 'You must install composer https://getcomposer.org/download/'
+        . " and use `composer install` command in the project's root folder." . PHP_EOL
+    );
+    exit(1);
+}
+
+require_once $autoload;
+require_once $bootstrap;

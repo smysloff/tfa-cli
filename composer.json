@@ -19,8 +19,5 @@
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-mbstring": "*"
-    },
-    "require-dev": {
-        "ext-xdebug": "*"
     }
 }
