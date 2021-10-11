@@ -30,6 +30,9 @@ use stdClass;
  */
 final class TermFrequencyCounter
 {
+    private const HELP = '--help';
+    private const VERSION = '--version';
+
     /**
      * @var array
      */
