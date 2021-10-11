@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 namespace Smysloff\TFC;
 
-use Smysloff\TFC\Cli\Parser as CliParser;
-use Smysloff\TFC\Http\Parser as HttpParser;
-use Smysloff\TFC\Text\Parser as TextParser;
-use Smysloff\TFC\Cli\Writer as CliWriter;
-use Smysloff\TFC\File\Writer as FileWriter;
-use Smysloff\TFC\Exceptions\CliException;
-use Smysloff\TFC\Exceptions\HttpException;
+use Smysloff\TFC\Exceptions\TfcException;
+use Smysloff\TFC\Modules\{
+    CliModule,
+    HttpModule,
+    TextModule,
+    PrintModule
+};
+use stdClass;
 
 /**
  * Class TermFrequencyCounter
@@ -29,84 +30,27 @@ use Smysloff\TFC\Exceptions\HttpException;
  */
 final class TermFrequencyCounter
 {
-    private const CLI_OPTIONS = [
-        'short' => 'hvi:o:',
-        'long' => [
-            'help',
-            'version',
-            'input:',
-            'output:',
-        ],
-        'singletons' => [
-            'h',
-            'help',
-            'v',
-            'version',
-        ],
-        'dependencies' => [
-            'o' => ['i', 'input'],
-            'output' => ['i', 'input'],
-        ],
-    ];
-
-    private const DEFAULT_CLI_PATH = [
-        'file' => 'out' . DIRECTORY_SEPARATOR . 'out.csv',
-        'dir' => 'out',
-    ];
-
     /**
-     * @var array List of web pages where needs to count the terms frequency
+     * @var array
      */
     private array $urls;
 
     /**
-     * @var array List of html-content from web pages
+     * @var object
      */
-    private array $html;
-
-    /**
-     * @var array
-     */
-    private array $words;
-
-    /**
-     * @var string
-     */
-    private string $rootDir;
-
-    /**
-     * @var CliParser
-     */
-    private CliParser $cli;
+    private object $modules;
 
     /**
      * TermFrequencyCounter constructor
      */
-    public function __construct(private bool $isCli = false)
+    public function __construct(private string $root)
     {
-        if ($this->isCli) {
-            $this->cli = new CliParser(self::CLI_OPTIONS['short'], self::CLI_OPTIONS['long']);
-        }
-    }
+        $this->modules = new stdClass();
 
-    /**
-     * @param string $rootDir
-     * @return $this
-     */
-    public function setRootDir(string $rootDir): self
-    {
-        $this->rootDir = $rootDir;
-        return $this;
-    }
-
-    /**
-     * @param array $urls
-     * @return $this
-     */
-    public function setUrls(array $urls): self
-    {
-        $this->urls = $urls;
-        return $this;
+        $this->modules->cli = new CliModule();
+        $this->modules->http = new HttpModule();
+        $this->modules->text = new TextModule();
+        $this->modules->print = new PrintModule();
     }
 
     /**
@@ -114,95 +58,20 @@ final class TermFrequencyCounter
      */
     public function run(): int
     {
-        if ($this->isCli) {
-            try {
-                $this->cliModule();
-
-                if ($this->cli->isHelp()) {
-                    echo 'help' . PHP_EOL;
-                    return 0;
-                }
-
-                if ($this->cli->isVersion()) {
-                    echo 'version' . PHP_EOL;
-                    return 0;
-                }
-            } catch (CliException $exception) {
-                return $this->printError($exception->getMessage());
-            }
-        }
+        $timer = new Timer();
 
         try {
+            $this->cliModule();
             $this->httpModule();
-        } catch (HttpException $exception) {
-            return $this->printError($exception->getMessage());
+            $this->textModule();
+            $this->printModule();
+        } catch (TfcException $exception) {
+            return $this->printError($exception->getMessage(), 2);
         }
 
-        $this->textModule();
-
-        if ($code = $this->printResult()) {
-            return $code;
-        }
+        echo $timer->end() . PHP_EOL;
 
         return 0;
-    }
-
-    /**
-     * @throws CliException
-     */
-    private function cliModule(): void
-    {
-        $this->cli->validation(
-            self::CLI_OPTIONS['singletons'],
-            self::CLI_OPTIONS['dependencies']
-        );
-
-        $this->cli->handling(
-            $this->rootDir,
-            self::DEFAULT_CLI_PATH
-        );
-
-        $this->urls = $this->cli->getUrls();
-    }
-
-    /**
-     * @throws HttpException
-     */
-    private function httpModule(): void
-    {
-        $this->html = (new HttpParser($this->urls))->get();
-    }
-
-    private function textModule(): void
-    {
-        foreach ($this->html as $html) {
-            if ($html === null) {
-                $this->words[] = null;
-                continue;
-            }
-            $this->words[] = (new TextParser($html))->get();
-        }
-    }
-
-
-    private function printResult(): int
-    {
-        if ($this->isCli) {
-
-            if (!$this->cli->isFile() && !$this->cli->getOutput()) {
-                return (new CliWriter())->print($this->urls[0], $this->words[0]);
-            }
-
-            if (!$this->cli->isFile() && $this->cli->getOutput()) {
-                return (new FileWriter($this->cli->getOutput() ?? self::DEFAULT_CLI_PATH['file']))
-                    ->toFile($this->urls[0], $this->words[0]);
-            }
-
-            return (new FileWriter($this->cli->getOutput() ?? self::DEFAULT_CLI_PATH['dir']))
-                ->toDir($this->urls, $this->words);
-        }
-
-        return $this->printError("Работа TFC в качестве встраиваемой библиотеки еще не поддерживается", 2);
     }
 
     /**
@@ -214,5 +83,36 @@ final class TermFrequencyCounter
     {
         fwrite(STDERR, $msg . PHP_EOL);
         return $code;
+    }
+
+    private function cliModule(): void
+    {
+        $this->modules->cli->run($this->root);
+        if ($this->modules->cli->isHelp()) {
+            $this->modules->print->msg(self::HELP);
+            exit(0);
+        }
+        if ($this->modules->cli->isVersion()) {
+            $this->modules->print->msg(self::VERSION);
+            exit(0);
+        }
+        $this->urls = $this->modules->cli->isFile()
+            ? file($this->modules->cli->getInput())
+            : [$this->modules->cli->getInput()];
+    }
+
+    private function httpModule(): void
+    {
+        $this->modules->http->run();
+    }
+
+    private function textModule(): void
+    {
+        $this->modules->text->run();
+    }
+
+    private function printModule(): void
+    {
+        print_r($this->urls);
     }
 }

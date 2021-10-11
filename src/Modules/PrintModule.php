@@ -11,15 +11,21 @@
 
 declare(strict_types=1);
 
-namespace Smysloff\TFC\File;
+namespace Smysloff\TFC\Modules;
 
 /**
- * Class Parser
+ * Class PrintModule
  *
  * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
- * @package Smysloff\TFC\File
+ * @package Smysloff\TFC\Modules
  */
-class Parser
+class PrintModule
 {
-
+    /**
+     * @param string $msg
+     */
+    public function msg(string $msg): void
+    {
+        echo $msg . PHP_EOL;
+    }
 }

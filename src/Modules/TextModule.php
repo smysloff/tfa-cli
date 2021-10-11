@@ -11,14 +11,17 @@
 
 declare(strict_types=1);
 
-namespace Smysloff\TFC;
+namespace Smysloff\TFC\Modules;
 
 /**
- * Class AbstractWriter
+ * Class TextModule
  *
  * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
- * @package Smysloff\TFC
+ * @package Smysloff\TFC\Modules
  */
-abstract class AbstractWriter
+class TextModule
 {
+    public function run()
+    {
+    }
 }

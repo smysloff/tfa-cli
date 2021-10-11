@@ -9,7 +9,17 @@
  *  file that was distributed with this source code.
  */
 
-use Smysloff\TFC\TermFrequencyCounter as App;
+declare(strict_types=1);
 
-$app = new App(dirname(__DIR__));
-return $app->run();
+namespace Smysloff\TFC\Modules;
+
+/**
+ * Class FileModule
+ *
+ * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
+ * @package Smysloff\TFC\Modules
+ */
+class FileModule
+{
+
+}
