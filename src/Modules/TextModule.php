@@ -21,7 +21,8 @@ namespace Smysloff\TFC\Modules;
  */
 class TextModule
 {
-    public function run()
+    public function run(array $htmls): array
     {
+        return [];
     }
 }

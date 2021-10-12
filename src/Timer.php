@@ -42,6 +42,6 @@ class Timer
         $end = hrtime(true);
         $delta = $end - $this->start;
 
-        return round($delta / 1e+6, 3);
+        return round($delta / 1e+9, 3); // nanoseconds => seconds
     }
 }

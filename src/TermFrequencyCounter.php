@@ -26,13 +26,23 @@ use stdClass;
  */
 final class TermFrequencyCounter
 {
-    private const HELP = '--help';
-    private const VERSION = '--version';
+    private const HELP = '--help placeholder message';
+    private const VERSION = '--version placeholder message';
 
     /**
      * @var array
      */
     private array $urls;
+
+    /**
+     * @var array
+     */
+    private array $htmls;
+
+    /**
+     * @var array
+     */
+    private array $words;
 
     /**
      * @var object
@@ -69,7 +79,7 @@ final class TermFrequencyCounter
             return $this->printError($exception->getMessage(), 2);
         }
 
-        echo $timer->end() . PHP_EOL;
+        echo 'total time: ' . $timer->end() . ' sec.' . PHP_EOL;
 
         return 0;
     }
@@ -103,16 +113,16 @@ final class TermFrequencyCounter
 
     private function httpModule(): void
     {
-        $this->modules->http->run();
+        $this->htmls = $this->modules->http->run($this->urls);
     }
 
     private function textModule(): void
     {
-        $this->modules->text->run();
+        $this->words = $this->modules->text->run($this->htmls);
     }
 
     private function printModule(): void
     {
-        print_r($this->urls);
+
     }
 }
