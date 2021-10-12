@@ -48,4 +48,35 @@ class FileModule
 
         return $urls;
     }
+
+    /**
+     * @param string $url
+     * @param array|null $words
+     * @param string $filename
+     * @throws FileException
+     */
+    public function write(string $url, ?array $words, string $filename): void
+    {
+        $stream = fopen($filename, 'w');
+        if ($stream === false) {
+            throw new FileException("Can't open the file " . $filename);
+        }
+
+        if ($words === null) {
+            fputs($stream, 'error');
+        } else {
+            $n = 1;
+            $all = 0;
+            foreach ($words as $word => $count) {
+                $n++;
+                $all += $count;
+                fputcsv($stream, [$word, $count]);
+            }
+            fputs($stream, PHP_EOL);
+            fputcsv($stream, ['all:', $all]);
+            fputcsv($stream, ['url:', $url]);
+        }
+
+        fclose($stream);
+    }
 }

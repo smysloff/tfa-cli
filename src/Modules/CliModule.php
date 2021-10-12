@@ -37,16 +37,13 @@ class CliModule
         ],
     ];
 
-    private const PATH = [
-        'DIR' => 'out',
-        'FILE' => 'output.csv',
-    ];
-
     private array $options;
 
     private bool $isHelp = false;
     private bool $isVersion = false;
     private bool $isFile = false;
+    private bool $isInput = false;
+    private bool $isOutput = false;
 
     private ?string $input = null;
     private ?string $output = null;
@@ -54,7 +51,10 @@ class CliModule
     /**
      * CliModule constructor
      */
-    public function __construct()
+    public function __construct(
+        private string $root,
+        private array $path
+    )
     {
         $this->options = getopt(self::OPTIONS['SHORT'], self::OPTIONS['LONG']);
     }
@@ -62,7 +62,7 @@ class CliModule
     /**
      * @throws CliException
      */
-    public function run(string $root): void
+    public function run(): void
     {
         if ($this->checkHelp()) {
             return;
@@ -70,8 +70,8 @@ class CliModule
         if ($this->checkVersion()) {
             return;
         }
-        $this->checkInput($root);
-        $this->checkOutput($root);
+        $this->checkInput($this->root);
+        $this->checkOutput($this->root);
     }
 
     /**
@@ -96,6 +96,22 @@ class CliModule
     public function isFile(): bool
     {
         return $this->isFile;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInput()
+    {
+        return $this->isInput;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOutput()
+    {
+        return $this->isOutput;
     }
 
     /**
@@ -154,36 +170,29 @@ class CliModule
      */
     private function checkInput(string $root): void
     {
-        $input = false;
-        foreach (['i', 'input'] as $key) {
-            if (key_exists($key, $this->options)) {
-                if ($input === true) {
-                    throw new CliException('input must be only in one variant 1');
-                }
-                $this->input = $this->options[$key];
-                $input = true;
-            }
-        }
-        if ($input === false) {
-            foreach ($_SERVER['argv'] as $key => $arg) {
-                if (
-                    $key === 0
-                    || in_array($_SERVER['argv'][$key - 1], ['-o', '--output'])
-                ) {
-                    continue;
-                }
-                if (!str_starts_with($arg, '-')) {
-                    if ($input === true) {
-                        throw new CliException('input must be only in one variant 2');
+        if (
+            $_SERVER['argc'] === 2
+            && !str_starts_with($_SERVER['argv'][1], '-')
+        ) {
+            $this->input = $_SERVER['argv'][1];
+            $this->isInput = true;
+        } else {
+            foreach (['i', 'input'] as $key) {
+                if (key_exists($key, $this->options)) {
+                    if ($this->isInput === true) {
+                        throw new CliException('input must be only in one variant 1');
                     }
-                    $this->input = $arg;
-                    $input = true;
+                    $this->input = $this->options[$key];
+                    $this->isInput = true;
                 }
             }
         }
-        if ($input === false) {
+
+        if ($this->isInput === false) {
             throw new CliException('input always need to be');
         }
+        $this->isInput = true;
+
         if (
             is_file($root . DIRECTORY_SEPARATOR . $this->input)
             && is_readable($root . DIRECTORY_SEPARATOR . $this->input)
@@ -198,20 +207,19 @@ class CliModule
      */
     private function checkOutput(string $root): void
     {
-        $output = false;
         foreach (['o', 'output'] as $key) {
             if (key_exists($key, $this->options)) {
-                if ($output === true) {
+                if ($this->isOutput === true) {
                     throw new CliException('output must be only in one variant');
                 }
                 $this->output = $root . DIRECTORY_SEPARATOR . $this->options[$key];
-                $output = true;
+                $this->isOutput = true;
             }
         }
-        if ($output === false) {
-            $this->output = $root . DIRECTORY_SEPARATOR . self::PATH['DIR'];
-            if ($this->isFile()) {
-                $this->output .= DIRECTORY_SEPARATOR . self::PATH['FILE'];
+        if ($this->isOutput === false) {
+            $this->output = $root . DIRECTORY_SEPARATOR . $this->path['dir'];
+            if (!$this->isFile()) {
+                $this->output .= DIRECTORY_SEPARATOR . $this->path['file'];
             }
         }
     }

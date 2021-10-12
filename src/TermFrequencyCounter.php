@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Smysloff\TFC;
 
-use Smysloff\TFC\Exceptions\FileException;
 use Smysloff\TFC\Exceptions\TfcException;
 use Smysloff\TFC\Modules\{CliModule, FileModule, HttpModule, TextModule, PrintModule};
 use stdClass;
@@ -26,6 +25,11 @@ use stdClass;
  */
 final class TermFrequencyCounter
 {
+    private const PATH = [
+        'dir' => 'out',
+        'file' => 'output.csv',
+    ];
+
     private const HELP = '--help placeholder message';
     private const VERSION = '--version placeholder message';
 
@@ -56,7 +60,7 @@ final class TermFrequencyCounter
     {
         $this->modules = new stdClass();
 
-        $this->modules->cli = new CliModule();
+        $this->modules->cli = new CliModule($this->root, self::PATH);
         $this->modules->file = new FileModule();
         $this->modules->http = new HttpModule();
         $this->modules->text = new TextModule();
@@ -123,6 +127,25 @@ final class TermFrequencyCounter
 
     private function printModule(): void
     {
-        print_r($this->words);
+        $this->modules->print->initFileModule($this->modules->file);
+
+        if (!$this->modules->cli->isFile()) {
+            $this->modules->cli->isOutput()
+                ? $this->modules->print->toFile(
+                    $this->urls[0],
+                    $this->words[0],
+                    $this->modules->cli->getOutput()
+                )
+                : $this->modules->print->toCli(
+                    $this->urls[0],
+                    $this->words[0]
+                );
+        } else {
+            $this->modules->print->toDir(
+                $this->urls,
+                $this->words,
+                $this->modules->cli->getOutput()
+            );
+        }
     }
 }
