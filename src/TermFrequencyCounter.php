@@ -123,6 +123,6 @@ final class TermFrequencyCounter
 
     private function printModule(): void
     {
-
+        print_r($this->words);
     }
 }
