@@ -13,13 +13,9 @@ declare(strict_types=1);
 
 namespace Smysloff\TFC;
 
+use Smysloff\TFC\Exceptions\FileException;
 use Smysloff\TFC\Exceptions\TfcException;
-use Smysloff\TFC\Modules\{
-    CliModule,
-    HttpModule,
-    TextModule,
-    PrintModule
-};
+use Smysloff\TFC\Modules\{CliModule, FileModule, HttpModule, TextModule, PrintModule};
 use stdClass;
 
 /**
@@ -51,6 +47,7 @@ final class TermFrequencyCounter
         $this->modules = new stdClass();
 
         $this->modules->cli = new CliModule();
+        $this->modules->file = new FileModule();
         $this->modules->http = new HttpModule();
         $this->modules->text = new TextModule();
         $this->modules->print = new PrintModule();
@@ -100,7 +97,7 @@ final class TermFrequencyCounter
             exit(0);
         }
         $this->urls = $this->modules->cli->isFile()
-            ? file($this->modules->cli->getInput())
+            ? $this->modules->file->read($this->modules->cli->getInput())
             : [$this->modules->cli->getInput()];
     }
 

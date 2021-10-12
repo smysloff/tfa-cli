@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Smysloff\TFC\Modules;
 
+use Smysloff\TFC\Exceptions\FileException;
+
 /**
  * Class FileModule
  *
@@ -21,5 +23,29 @@ namespace Smysloff\TFC\Modules;
  */
 class FileModule
 {
+    /**
+     * @param string $filename
+     * @return array
+     * @throws FileException
+     */
+    public function read(string $filename): array
+    {
+        $urls = [];
+        $stream = fopen($filename, 'r');
+        if ($stream === false) {
+            throw new FileException("Can't open the file " . $filename);
+        }
+        while (!feof($stream)) {
+            $line = fgets($stream);
+            if ($line === false) {
+                break;
+            }
+            if (!empty($url = trim($line))) {
+                $urls[] = $url;
+            }
+        }
+        fclose($stream);
 
+        return $urls;
+    }
 }
