@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  This file is part of the Term Frequency Checker.
+ *  This file is part of the Term Frequency Analyzer.
  *
  *  (c) Alexander Smyslov <kokoc.smyslov@yandex.ru>
  *

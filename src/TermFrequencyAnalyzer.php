@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  This file is part of the Term Frequency Checker.
+ *  This file is part of the Term Frequency Analyzer.
  *
  *  (c) Alexander Smyslov <kokoc.smyslov@yandex.ru>
  *
@@ -11,20 +11,19 @@
 
 declare(strict_types=1);
 
-namespace Smysloff\TFC;
+namespace Smysloff\TFA;
 
-use cijic\phpMorphy\Morphy;
-use Smysloff\TFC\Exceptions\TfcException;
-use Smysloff\TFC\Modules\{CliModule, FileModule, HttpModule, TextModule, PrintModule};
+use Smysloff\TFA\Exceptions\TfaException;
+use Smysloff\TFA\Modules\{CliModule, FileModule, HttpModule, TextModule, PrintModule};
 use stdClass;
 
 /**
  * Class TermFrequencyCounter
  *
  * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
- * @package Smysloff\TFC
+ * @package Smysloff\TFA
  */
-final class TermFrequencyCounter
+final class TermFrequencyAnalyzer
 {
     private const USER_AGENT = 'Mozilla/5.0 (compatible; Selby Agency; +https://selby.su)';
 
@@ -33,8 +32,32 @@ final class TermFrequencyCounter
         'file' => 'output.csv',
     ];
 
-    private const HELP = '--help placeholder message';
-    private const VERSION = '--version placeholder message';
+    private const HELP = ''
+        . 'Term frequency analyze of web-page(s).' . PHP_EOL
+        . PHP_EOL
+        . 'Usage' . PHP_EOL
+        . '  php tfa.php <input>' . PHP_EOL
+        . 'or' . PHP_EOL
+        . '  php tfa.php -i <input> [-o <output>]' . PHP_EOL
+        . PHP_EOL
+        . 'Options' . PHP_EOL
+        . '  -i, --input <input>       URL of web-page or file with list of URLs' . PHP_EOL
+        . '  -o, --output <output>     file of text-analyze\'s output for single URL or directory for URLs list ' . PHP_EOL
+        . '  -v, --version             output version information and exit' . PHP_EOL
+        . '  -h, --help                display this help and exit' . PHP_EOL
+        . PHP_EOL
+        . 'Examples' . PHP_EOL
+        . '  php tfa.php example.com               analyze example.com page and display output to CLI' . PHP_EOL
+        . '  php tfa.php -i in/urls.txt -o out     analyze all pages in URLs list and display output to separate files in directory ./out';
+
+    private const VERSION = ''
+        . 'Term Frequency Analyzer 0.1.0' . PHP_EOL
+        . PHP_EOL
+        . 'License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>' . PHP_EOL
+        . 'This is free software: you are free to change and redistribute it.' . PHP_EOL
+        . 'There is NO WARRANTY, to the extent permitted by law.' . PHP_EOL
+        . PHP_EOL
+        . 'Written by Alexander Smyslov <kokoc.smyslov@yandex.ru>.';
 
     /**
      * @var array
@@ -82,7 +105,7 @@ final class TermFrequencyCounter
             $this->httpModule();
             $this->textModule();
             $this->printModule();
-        } catch (TfcException $exception) {
+        } catch (TfaException $exception) {
             return $this->modules->print->error($exception->getMessage(), 2);
         }
 

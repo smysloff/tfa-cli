@@ -4,7 +4,7 @@
     "license": "GPLv3-or-later",
     "autoload": {
         "psr-4": {
-            "Smysloff\\TFC\\": "src/"
+            "Smysloff\\TFA\\": "src/"
         }
     },
     "authors": [

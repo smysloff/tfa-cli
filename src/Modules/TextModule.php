@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  This file is part of the Term Frequency Checker.
+ *  This file is part of the Term Frequency Analyzer.
  *
  *  (c) Alexander Smyslov <kokoc.smyslov@yandex.ru>
  *
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Smysloff\TFC\Modules;
+namespace Smysloff\TFA\Modules;
 
 use phpMorphy;
 use phpMorphy_Exception;
@@ -22,7 +22,7 @@ use stdClass;
  * Class TextModule
  *
  * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
- * @package Smysloff\TFC\Modules
+ * @package Smysloff\TFA\Modules
  */
 class TextModule
 {

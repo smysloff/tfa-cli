@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  This file is part of the Term Frequency Checker.
+ *  This file is part of the Term Frequency Analyzer.
  *
  *  (c) Alexander Smyslov <kokoc.smyslov@yandex.ru>
  *
@@ -9,7 +9,7 @@
  *  file that was distributed with this source code.
  */
 
-use Smysloff\TFC\TermFrequencyCounter as App;
+use Smysloff\TFA\TermFrequencyAnalyzer as App;
 
 $app = new App(dirname(__DIR__));
 return $app->run();

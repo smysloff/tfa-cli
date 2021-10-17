@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  This file is part of the Term Frequency Checker.
+ *  This file is part of the Term Frequency Analyzer.
  *
  *  (c) Alexander Smyslov <kokoc.smyslov@yandex.ru>
  *
@@ -11,15 +11,15 @@
 
 declare(strict_types=1);
 
-namespace Smysloff\TFC\Exceptions;
+namespace Smysloff\TFA\Exceptions;
 
 /**
  * Class FileException
  *
  * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
- * @package Smysloff\TFC\Exceptions
+ * @package Smysloff\TFA\Exceptions
  */
-class TextException extends TfcException
+class TextException extends TfaException
 {
 
 }

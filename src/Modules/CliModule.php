@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  This file is part of the Term Frequency Checker.
+ *  This file is part of the Term Frequency Analyzer.
  *
  *  (c) Alexander Smyslov <kokoc.smyslov@yandex.ru>
  *
@@ -11,15 +11,15 @@
 
 declare(strict_types=1);
 
-namespace Smysloff\TFC\Modules;
+namespace Smysloff\TFA\Modules;
 
-use Smysloff\TFC\Exceptions\CliException;
+use Smysloff\TFA\Exceptions\CliException;
 
 /**
  * Class CliModule
  *
  * @author Alexander Smyslov <kokoc.smyslov@yandex.ru>
- * @package Smysloff\TFC\Modules
+ * @package Smysloff\TFA\Modules
  */
 class CliModule
 {
