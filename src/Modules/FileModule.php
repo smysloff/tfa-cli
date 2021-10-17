@@ -67,14 +67,16 @@ class FileModule
         } else {
             $n = 1;
             $all = 0;
-            foreach ($words as $word => $count) {
-                $n++;
-                $all += $count;
-                fputcsv($stream, [$word, $count]);
+            foreach ($words as $word => $term) {
+                $all += $term['count'];
+                fputcsv($stream, [$n++, '['.$word.']', '['.$term['count'].']']);
+                foreach ($term['forms'] as $form => $count) {
+                    fputcsv($stream, ['', mb_strtolower($form), $count]);
+                }
             }
             fputs($stream, PHP_EOL);
-            fputcsv($stream, ['all:', $all]);
-            fputcsv($stream, ['url:', $url]);
+            fputcsv($stream, ['', 'all:', $all]);
+            fputcsv($stream, ['', 'url:', $url]);
         }
 
         fclose($stream);

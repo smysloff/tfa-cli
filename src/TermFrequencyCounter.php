@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Smysloff\TFC;
 
+use cijic\phpMorphy\Morphy;
 use Smysloff\TFC\Exceptions\TfcException;
 use Smysloff\TFC\Modules\{CliModule, FileModule, HttpModule, TextModule, PrintModule};
 use stdClass;
@@ -25,6 +26,8 @@ use stdClass;
  */
 final class TermFrequencyCounter
 {
+    private const USER_AGENT = 'Mozilla/5.0 (compatible; Selby Agency; +https://selby.su)';
+
     private const PATH = [
         'dir' => 'out',
         'file' => 'output.csv',
@@ -62,8 +65,8 @@ final class TermFrequencyCounter
 
         $this->modules->cli = new CliModule($this->root, self::PATH);
         $this->modules->file = new FileModule();
-        $this->modules->http = new HttpModule();
-        $this->modules->text = new TextModule();
+        $this->modules->http = new HttpModule(self::USER_AGENT);
+        $this->modules->text = new TextModule($this->root);
         $this->modules->print = new PrintModule();
     }
 
@@ -80,23 +83,12 @@ final class TermFrequencyCounter
             $this->textModule();
             $this->printModule();
         } catch (TfcException $exception) {
-            return $this->printError($exception->getMessage(), 2);
+            return $this->modules->print->error($exception->getMessage(), 2);
         }
 
         echo 'total time: ' . $timer->end() . ' sec.' . PHP_EOL;
 
         return 0;
-    }
-
-    /**
-     * @param int $code
-     * @param string $msg
-     * @return int
-     */
-    private function printError(string $msg, int $code = 1): int
-    {
-        fwrite(STDERR, $msg . PHP_EOL);
-        return $code;
     }
 
     private function cliModule(): void
@@ -132,14 +124,14 @@ final class TermFrequencyCounter
         if (!$this->modules->cli->isFile()) {
             $this->modules->cli->isOutput()
                 ? $this->modules->print->toFile(
-                    $this->urls[0],
-                    $this->words[0],
-                    $this->modules->cli->getOutput()
-                )
+                $this->urls[0],
+                $this->words[0],
+                $this->modules->cli->getOutput()
+            )
                 : $this->modules->print->toCli(
-                    $this->urls[0],
-                    $this->words[0]
-                );
+                $this->urls[0],
+                $this->words[0]
+            );
         } else {
             $this->modules->print->toDir(
                 $this->urls,

@@ -61,9 +61,12 @@ class PrintModule
         $n = 1;
         $all = 0;
 
-        foreach ($words as $word => $count) {
-            $all += $count;
-            printf('%' . $length . 's. %s [%s]' . PHP_EOL, $n++, $word, $count);
+        foreach ($words as $word => $term) {
+            $all += $term['count'];
+            printf('%' . $length . 's. [%s] [%s]' . PHP_EOL, $n++, $word, $term['count']);
+            foreach ($term['forms'] as $form => $count) {
+                printf('%' . $length + 2 . 's %s %s' . PHP_EOL, '-', mb_strtolower($form), $count);
+            }
         }
 
         echo '----- ----- ----- -----' . PHP_EOL
@@ -112,6 +115,17 @@ class PrintModule
         }
 
         return $this;
+    }
+
+    /**
+     * @param int $code
+     * @param string $msg
+     * @return int
+     */
+    public function error(string $msg, int $code = 1): int
+    {
+        fwrite(STDERR, $msg . PHP_EOL);
+        return $code;
     }
 
     /**

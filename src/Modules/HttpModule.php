@@ -21,18 +21,33 @@ namespace Smysloff\TFC\Modules;
  */
 class HttpModule
 {
-    private const USER_AGENT = 'Mozilla/5.0 (compatible; Selby Agency; +https://selby.su)';
+    private const USER_AGENT = 'Mozilla/5.0 (compatible; Term Frequency Counter; +https://github.com/smysloff/tfc)';
 
-    private const OPTIONS = [
+    /**
+     * @var array
+     */
+    private array $options = [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_AUTOREFERER => true,
-        CURLOPT_USERAGENT => self::USER_AGENT,
         CURLOPT_SSL_VERIFYHOST => 0,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_HEADER => false,
     ];
 
+    /**
+     * HttpModule constructor
+     * @param string $userAgent
+     */
+    public function __construct(private string $userAgent = self::USER_AGENT)
+    {
+        $this->options[CURLOPT_USERAGENT] = $this->userAgent;
+    }
+
+    /**
+     * @param array $urls
+     * @return array
+     */
     public function run(array $urls)
     {
         $mh = curl_multi_init();
@@ -40,7 +55,7 @@ class HttpModule
         $handlers = [];
         foreach ($urls as $key => $url) {
             $handlers[$key] = curl_init($url);
-            curl_setopt_array($handlers[$key], self::OPTIONS);
+            curl_setopt_array($handlers[$key], $this->options);
             curl_multi_add_handle($mh, $handlers[$key]);
         }
 
