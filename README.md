@@ -1,6 +1,8 @@
 # Term Frequency Analyzer (CLI версия)
 Консольная программа для анализа частотности слов, использованных в текстах на сайтах.
+<p align="center"><img src="https://raw.githubusercontent.com/smysloff/tfa-cli/master/files/readme.gif" width="840"></p>
 <p align="center"><img src="https://raw.githubusercontent.com/smysloff/tfa-cli/master/files/readme.png" width="840"></p>
+
 
 ## Требования
 - [PHP 8.0](https://www.php.net/downloads)

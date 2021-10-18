@@ -81,6 +81,7 @@ final class TermFrequencyAnalyzer
 
     /**
      * TermFrequencyCounter constructor
+     * @throws Exceptions\TextException
      */
     public function __construct(private string $root)
     {

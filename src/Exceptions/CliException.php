@@ -21,15 +21,7 @@ namespace Smysloff\TFA\Exceptions;
  */
 class CliException extends TfaException
 {
-    public const MSG_EMPTY = 'При запуске программы не были переданы аргументы командной строки.'
-    . PHP_EOL . "Попробуйте передать '-h' для получения справки по работе программы.";
-
-    public const MSG_DUPLICATES = 'Один и тот же аргумент был передан дважды.'
-    . PHP_EOL . "В короткой ('%s') и длинной ('%s') формах.";
-
-    public const MSG_SINGLETONS = "Аргумент '%s' не может использоваться с другими аргументами командной строки.";
-
-    public const MSG_DEPENDENCIES = "Вместе с аргументом '%s' всегда должен использоваться аргумент '%s'.";
-
-    public const MSG_REQUIRED = "Необходимо передать '%s' в качестве одного из входных параметров";
+    public const MSG_REQUIRED = "You must pass '%s' as one of the input parameters";
+    public const MSG_SINGLETON = "The '%s' argument cannot be used with other command line arguments";
+    public const MSG_DUPLICATE = "The same argument has been used twice (in short form '%s' and in long form '%s')";
 }

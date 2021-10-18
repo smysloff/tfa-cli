@@ -21,5 +21,5 @@ namespace Smysloff\TFA\Exceptions;
  */
 class FileException extends TfaException
 {
-
+    public const MSG_NOT_FILE = "Cannot open the file %s";
 }

@@ -16,6 +16,7 @@ namespace Smysloff\TFA\Modules;
 use phpMorphy;
 use phpMorphy_Exception;
 use phpMorphy_FilesBundle;
+use Smysloff\TFA\Exceptions\TextException;
 use stdClass;
 
 /**
@@ -45,6 +46,7 @@ class TextModule
     /**
      * TextModule constructor
      * @param string $root
+     * @throws TextException
      */
     public function __construct(private string $root)
     {
@@ -85,7 +87,9 @@ class TextModule
             $this->morphy->rus = new phpMorphy($dict_bundle_rus, $opts);
             $this->morphy->eng = new phpMorphy($dict_bundle_eng, $opts);
         } catch (phpMorphy_Exception $e) {
-            die('Error occurred while creating phpMorphy instance: ' . $e->getMessage());
+            throw new TextException(
+                sprintf(TextException::MSG_PHPMORPHY, $e->getMessage())
+            );
         }
     }
 
@@ -143,7 +147,7 @@ class TextModule
 
             uasort($terms, fn($a, $b) => $b['count'] <=> $a['count']);
 
-            foreach ($terms as $key => &$value) {
+            foreach ($terms as &$value) {
                 uasort($value['forms'], fn($a, $b) => $b <=> $a);
             }
             reset($terms);

@@ -139,7 +139,9 @@ class CliModule
         foreach (['h', 'help'] as $key) {
             if (key_exists($key, $this->options)) {
                 if ($_SERVER['argc'] > 2 || count($this->options) > 1) {
-                    throw new CliException('help must be standalone');
+                    throw new CliException(
+                        sprintf(CliException::MSG_SINGLETON, $key)
+                    );
                 }
                 return $this->isHelp = true;
             }
@@ -156,7 +158,9 @@ class CliModule
         foreach (['v', 'version'] as $key) {
             if (key_exists($key, $this->options)) {
                 if ($_SERVER['argc'] > 2 || count($this->options) > 1) {
-                    throw new CliException('version must be standalone');
+                    throw new CliException(
+                        sprintf(CliException::MSG_SINGLETON, $key)
+                    );
                 }
                 return $this->isVersion = true;
             }
@@ -180,7 +184,9 @@ class CliModule
             foreach (['i', 'input'] as $key) {
                 if (key_exists($key, $this->options)) {
                     if ($this->isInput === true) {
-                        throw new CliException('input must be only in one variant 1');
+                        throw new CliException(
+                            sprintf(CliException::MSG_DUPLICATE, 'i', 'input')
+                        );
                     }
                     $this->input = $this->options[$key];
                     $this->isInput = true;
@@ -189,7 +195,9 @@ class CliModule
         }
 
         if ($this->isInput === false) {
-            throw new CliException('input always need to be');
+            throw new CliException(
+                sprintf(CliException::MSG_REQUIRED, 'i')
+            );
         }
         $this->isInput = true;
 
@@ -210,7 +218,9 @@ class CliModule
         foreach (['o', 'output'] as $key) {
             if (key_exists($key, $this->options)) {
                 if ($this->isOutput === true) {
-                    throw new CliException('output must be only in one variant');
+                    throw new CliException(
+                        sprintf(CliException::MSG_DUPLICATE, 'o', 'output')
+                    );
                 }
                 $this->output = $root . DIRECTORY_SEPARATOR . $this->options[$key];
                 $this->isOutput = true;

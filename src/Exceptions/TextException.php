@@ -21,5 +21,5 @@ namespace Smysloff\TFA\Exceptions;
  */
 class TextException extends TfaException
 {
-
+    public const MSG_PHPMORPHY = "Error occurred while creating phpMorphy instance: '%s'";
 }

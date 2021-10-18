@@ -33,7 +33,9 @@ class FileModule
         $urls = [];
         $stream = fopen($filename, 'r');
         if ($stream === false) {
-            throw new FileException("Can't open the file " . $filename);
+            throw new FileException(
+                sprintf(FileException::MSG_NOT_FILE, $filename)
+            );
         }
         while (!feof($stream)) {
             $line = fgets($stream);
@@ -59,7 +61,9 @@ class FileModule
     {
         $stream = fopen($filename, 'w');
         if ($stream === false) {
-            throw new FileException("Can't open the file " . $filename);
+            throw new FileException(
+                sprintf(FileException::MSG_NOT_FILE, $filename)
+            );
         }
 
         if ($words === null) {

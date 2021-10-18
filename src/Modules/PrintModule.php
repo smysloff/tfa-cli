@@ -124,7 +124,7 @@ class PrintModule
      */
     public function error(string $msg, int $code = 1): int
     {
-        fwrite(STDERR, $msg . PHP_EOL);
+        fwrite(STDERR, 'tfa.php: ' . $msg . PHP_EOL);
         return $code;
     }
 
