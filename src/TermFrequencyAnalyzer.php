@@ -51,7 +51,7 @@ final class TermFrequencyAnalyzer
         . '  php tfa.php -i in/urls.txt -o out     analyze all pages in URLs list and display output to separate files in directory ./out';
 
     private const VERSION = ''
-        . 'Term Frequency Analyzer 0.2.0' . PHP_EOL
+        . 'Term Frequency Analyzer 0.2.1' . PHP_EOL
         . PHP_EOL
         . 'License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>' . PHP_EOL
         . 'This is free software: you are free to change and redistribute it.' . PHP_EOL
